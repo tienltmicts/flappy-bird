@@ -1,0 +1,10 @@
+body {
+    margin: auto;
+}
+#scenery {
+    width: 800px;
+    height: 600px;
+    border:1px solid black;
+    position: relative;
+    background-size: auto;
+}
