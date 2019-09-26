@@ -10,10 +10,10 @@ export default class Bird {
         this.bird = document.createElement('div');
         this.bird.animate([
             {
-                backgroundPosition: `0px, ${this.BIRD_SIZE}px, ${this.BIRD_SIZE * 2}px`
+                backgroundPosition: `0px, ${this.width}px, ${this.width * 2}px`
             },
             {
-                backgroundPosition: `${-this.BIRD_SIZE * 3}px, ${-this.BIRD_SIZE * 2}px, ${-this.BIRD_SIZE}px`
+                backgroundPosition: `${-this.width * 3}px, ${-this.width* 2}px, ${-this.width}px`
             }
         ], {
             iterations: 'Infinity',
