@@ -2,8 +2,20 @@ export default class Ground {
     height = 0;
     top = 0;
     width = 0;
+    speed = 2000;
     constructor() {
         this.ground = document.createElement('div');
+        this.ground.animate([
+            {
+                backgroundPosition: `0px`
+            },
+            {
+                backgroundPosition: `-180px`
+            }
+        ], {
+            iterations: 'Infinity',
+            duration: this.speed
+        });
     }
 
     getDOM() {
