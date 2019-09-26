@@ -21,9 +21,16 @@ export default class Scenery {
 
         this.bird = new Bird();
         this.scenery.appendChild(this.bird.getDOM());
+
+        window.onclick = () => {
+            this.bird.flyUp();
+        }
     }
     
     update() {
+        if(this.bird.top  + this.bird.height > this.ground.top  ) {
+            this.bird.flyUp();
+        }
         this.ground.update();
         this.bird.update();
         this.sky.update();
