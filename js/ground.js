@@ -2,7 +2,7 @@ export default class Ground {
     height = 0;
     top = 0;
     width = 0;
-    speed = 2000;
+    speed = 3600;
     constructor() {
         this.ground = document.createElement('div');
         this.ground.animate([

@@ -20,35 +20,52 @@ export default class Scenery {
         this.sky.height = this.height - 80;
         this.scenery.appendChild(this.sky.getDOM());
 
-        this.bird = new Bird();
-        this.scenery.appendChild(this.bird.getDOM());
 
         window.onclick = () => {
             this.bird.flyUp();
         }
-        this.pipes = [];
-        for (let i = 0; i < 6; i++) {
-            const distance = 150;
+
+        this.pipes = Array.from({ length: 0 }, () => new Pipe());
+        this.distancePipeTopBottom = 170;
+        this.distanceBetweenPipe = 200;
+        this.totalPipe = 6;
+        this.pipeWidth = 100;
+
+        for (let i = 0; i < this.totalPipe; i++) {
             const pipeHeight = 50 + ~~(Math.random() * 200);
             const pipeTop = new Pipe(true);
+            pipeTop.width = this.pipeWidth;
             pipeTop.height = pipeHeight;
-            pipeTop.left = (i + 1) * 200;
+            pipeTop.left = (i + 1) * (this.pipeWidth + this.distanceBetweenPipe);
             this.scenery.appendChild(pipeTop.getDOM());
 
             const pipeBottom = new Pipe(false);
-            pipeBottom.height = this.height - this.ground.height - pipeHeight - distance;
-            pipeBottom.top = pipeHeight + distance;
-            pipeBottom.left = (i + 1) * 200;
+            pipeBottom.width = this.pipeWidth;
+            pipeBottom.height = this.height - this.ground.height - pipeHeight - this.distancePipeTopBottom;
+            pipeBottom.top = pipeHeight + this.distancePipeTopBottom;
+            pipeBottom.left = (i + 1) * (this.pipeWidth + this.distanceBetweenPipe);
             this.scenery.appendChild(pipeBottom.getDOM());
             this.pipes.push(pipeTop, pipeBottom);
         }
 
+        this.bird = new Bird();
+        this.scenery.appendChild(this.bird.getDOM());
+    }
+
+    movePipe() {
+        this.pipes.forEach(pipe => {
+            pipe.left--;
+            if (pipe.left < -this.pipeWidth) {
+                pipe.left += (this.pipeWidth + this.distanceBetweenPipe) * this.totalPipe ;
+            }
+        });
     }
 
     update() {
         if (this.bird.top + this.bird.height > this.ground.top) {
             this.bird.flyUp();
         }
+        this.movePipe();
         this.ground.update();
         this.bird.update();
         this.sky.update();
