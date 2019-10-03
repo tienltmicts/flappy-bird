@@ -6,6 +6,7 @@ export default class Bird {
     d = 0.1;
     top = 0;
     up = 0;
+    left = 0;
     constructor() {
         this.bird = document.createElement('div');
         this.bird.animate([
@@ -54,6 +55,7 @@ export default class Bird {
         this.bird.style.backgroundImage = 'url(assets/sprites/bluebird-upflap.png), url(assets/sprites/bluebird-midflap.png), url(assets/sprites/bluebird-downflap.png)';
         this.bird.style.width = this.width + "px";
         this.bird.style.height = this.height + "px";
+        this.bird.style.left = this.left + "px";
         this.bird.style.position = 'absolute';
         this.bird.style.backgroundRepeat = 'no-repeat, no-repeat, no-repeat';
         this.bird.style.backgroundSize = 'contain, contain, contain';
