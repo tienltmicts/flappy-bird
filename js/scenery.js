@@ -66,6 +66,7 @@ export default class Scenery {
         this.bird.top = 0;
         this.bird.up = 0;
         this.bird.left = 100;
+        this.bird.rotate = -20;
         this.pipes.forEach((pipe, index, arr) => {
             pipe.left = (1 + (index + 1) >> 1) * (this.pipeWidth + this.distanceBetweenPipe);
             pipe.height = index & 1 ? this.height - this.ground.height - arr[index - 1].height - this.distancePipeTopBottom : 50 + ~~(Math.random() * 200);
@@ -83,7 +84,6 @@ export default class Scenery {
                 pipe.left <= this.bird.left + this.bird.width && (this.bird.left + this.bird.width) <= pipe.left + pipe.width) {
                 if (!(i & 1) && this.bird.top <= pipe.height ||
                     (i & 1) && this.bird.top + this.bird.height >= pipe.top && pipe.top > 150) {
-                    alert('game over');
                     this.restart();
                 }
             }

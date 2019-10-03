@@ -7,6 +7,7 @@ export default class Bird {
     top = 0;
     up = 0;
     left = 0;
+    rotate = -20;
     constructor() {
         this.bird = document.createElement('div');
         this.bird.animate([
@@ -14,7 +15,7 @@ export default class Bird {
                 backgroundPosition: `0px, ${this.width}px, ${this.width * 2}px`
             },
             {
-                backgroundPosition: `${-this.width * 3}px, ${-this.width* 2}px, ${-this.width}px`
+                backgroundPosition: `${-this.width * 3}px, ${-this.width * 2}px, ${-this.width}px`
             }
         ], {
             iterations: 'Infinity',
@@ -39,8 +40,14 @@ export default class Bird {
         if (this.up > 0) {
             this.up -= 9;
             this.top -= this.up < 0 ? this.up + 9 : 9;
+            if (this.rotate > -20) {
+                this.rotate -= 10;
+            }
         } else {
-            this.top += 5;
+            this.top += 7;
+            if (this.rotate < 90) {
+                this.rotate += 3;
+            }
         }
     }
 
@@ -59,5 +66,6 @@ export default class Bird {
         this.bird.style.position = 'absolute';
         this.bird.style.backgroundRepeat = 'no-repeat, no-repeat, no-repeat';
         this.bird.style.backgroundSize = 'contain, contain, contain';
+        this.bird.style.transform = `rotate(${this.rotate}deg)`;
     }
 };
