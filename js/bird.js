@@ -1,5 +1,5 @@
 export default class Bird {
-    width = 80;
+    width = 50;
     height = this.width * 24 / 34;
     speed = 500;
     w = 0;
@@ -45,7 +45,7 @@ export default class Bird {
     }
 
     flyUp() {
-        this.up = 100;
+        this.up = 80;
     }
 
     update() {
