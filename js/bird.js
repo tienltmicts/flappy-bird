@@ -8,6 +8,7 @@ export default class Bird {
     up = 0;
     left = 0;
     rotate = -20;
+    flyUpSound = new Audio('assets/audio/wing.wav');
     constructor() {
         this.bird = document.createElement('div');
         this.bird.animate([
@@ -53,6 +54,8 @@ export default class Bird {
 
     flyUp() {
         this.up = 80;
+        this.flyUpSound.currentTime = 0;
+        this.flyUpSound.play();
     }
 
     update() {

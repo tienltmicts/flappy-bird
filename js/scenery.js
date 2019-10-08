@@ -108,9 +108,6 @@ export default class Scenery {
     }
 
     update() {
-        if (this.bird.top + this.bird.height > this.ground.top) {
-            this.bird.flyUp();
-        }
         this.checkDied();
         this.movePipe();
         this.ground.update();
