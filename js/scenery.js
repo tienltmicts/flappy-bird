@@ -4,6 +4,8 @@ import Bird from "./bird.js";
 import Pipe from "./pipe.js";
 
 export default class Scenery {
+    isGameOver = false;
+    isHitPipe = false;
     constructor(width, height) {
         this.width = width;
         this.height = height;
@@ -22,14 +24,14 @@ export default class Scenery {
 
 
         window.onclick = () => {
-            this.bird.flyUp();
+            if (!this.isGameOver && !this.isHitPipe) this.bird.flyUp();
         }
 
         this.distancePipeTopBottom = 200;
         this.distanceBetweenPipe = 200;
         this.totalPipe = 2 * 6;
         this.pipeWidth = 100;
-        this.pipeSpeed = 1;
+        this.pipeSpeed = 2;
         this.pipes = Array.from({ length: 0 }, () => new Pipe());
         for (let i = 0; i < this.totalPipe >> 1; i++) {
             const pipeHeight = 50 + ~~(Math.random() * 200);
@@ -69,6 +71,8 @@ export default class Scenery {
     }
 
     restart() {
+        this.isGameOver = false;
+        this.isHitPipe = false;
         this.score = 0;
         this.bird.top = 100;
         this.bird.up = 0;
@@ -83,7 +87,8 @@ export default class Scenery {
 
     checkDied() {
         if (this.bird.top > (this.height - this.bird.height - this.ground.height)) {
-            this.restart();
+            this.isGameOver = true;
+            return true;
         }
         for (let i = 0; i < this.totalPipe; i++) {
             const pipe = this.pipes[i];
@@ -91,10 +96,13 @@ export default class Scenery {
                 pipe.left <= this.bird.left + this.bird.width && (this.bird.left + this.bird.width) <= pipe.left + pipe.width) {
                 if (!(i & 1) && this.bird.top <= pipe.height ||
                     (i & 1) && this.bird.top + this.bird.height >= pipe.top && pipe.top > 150) {
-                    this.restart();
+                    this.isHitPipe = true;
+                    this.bird.up = 0;
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     checkScore() {
@@ -109,11 +117,15 @@ export default class Scenery {
 
     update() {
         this.checkDied();
-        this.movePipe();
         this.ground.update();
-        this.bird.update();
         this.sky.update();
-        this.pipes.forEach(pipe => pipe.update());
-        this.checkScore();
+        if (!this.isGameOver) {
+            this.bird.update();
+            if (!this.isHitPipe) {
+                this.movePipe();
+                this.pipes.forEach(pipe => pipe.update());
+                this.checkScore();
+            }
+        }
     }
 }
