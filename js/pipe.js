@@ -4,6 +4,7 @@ export default class Pipe {
     top = 0;
     left = 0;
     isTopPipe = false;
+    speed = 1;
     constructor(isTopPipe) {
         this.isTopPipe = isTopPipe;
         this.pipe = document.createElement('div');
@@ -12,6 +13,11 @@ export default class Pipe {
     getDOM() {
         return this.pipe;
     }
+
+    moveLeft(){
+        this.left -= this.speed;
+    }
+
     update() {
         this.pipe.style.backgroundImage = 'url(assets/sprites/pipe-green.png)';
         this.pipe.style.width = this.width + 'px';

@@ -27,48 +27,55 @@ export default class Scenery {
 
         this.distancePipeTopBottom = 200;
         this.distanceBetweenPipe = 200;
-        this.totalPipe = 6;
+        this.totalPipe = 2 * 6;
         this.pipeWidth = 100;
+        this.pipeSpeed = 1;
         this.pipes = Array.from({ length: 0 }, () => new Pipe());
-        for (let i = 0; i < this.totalPipe; i++) {
+        for (let i = 0; i < this.totalPipe >> 1; i++) {
             const pipeHeight = 50 + ~~(Math.random() * 200);
             const pipeTop = new Pipe(true);
+            pipeTop.speed = this.pipeSpeed;
             pipeTop.width = this.pipeWidth;
             pipeTop.height = pipeHeight;
-            pipeTop.left = (i + 1) * (this.pipeWidth + this.distanceBetweenPipe);
+            pipeTop.left = this.width + i * (this.pipeWidth + this.distanceBetweenPipe);
             this.scenery.appendChild(pipeTop.getDOM());
 
             const pipeBottom = new Pipe(false);
+            pipeBottom.speed = this.pipeSpeed;
             pipeBottom.width = this.pipeWidth;
             pipeBottom.height = this.height - this.ground.height - pipeHeight - this.distancePipeTopBottom;
             pipeBottom.top = pipeHeight + this.distancePipeTopBottom;
-            pipeBottom.left = (i + 1) * (this.pipeWidth + this.distanceBetweenPipe);
+            pipeBottom.left = this.width + i * (this.pipeWidth + this.distanceBetweenPipe);
             this.scenery.appendChild(pipeBottom.getDOM());
             this.pipes.push(pipeTop, pipeBottom);
         }
         this.bird = new Bird();
+        this.bird.top = 100;
         this.bird.left = 100;
         this.scenery.appendChild(this.bird.getDOM());
+        this.score = 0;
     }
+
 
     movePipe() {
         this.pipes.forEach((pipe, index, arr) => {
-            pipe.left--;
+            pipe.moveLeft();
             if (pipe.left < -this.pipeWidth) {
                 pipe.height = index & 1 ? this.height - this.ground.height - arr[index - 1].height - this.distancePipeTopBottom : 50 + ~~(Math.random() * 200);
                 pipe.top = index & 1 ? arr[index - 1].height + this.distancePipeTopBottom : 0;
-                pipe.left += (this.pipeWidth + this.distanceBetweenPipe) * this.totalPipe;
+                pipe.left += (this.pipeWidth + this.distanceBetweenPipe) * (this.totalPipe >> 1);
             }
         });
     }
 
     restart() {
-        this.bird.top = 0;
+        this.score = 0;
+        this.bird.top = 100;
         this.bird.up = 0;
         this.bird.left = 100;
         this.bird.rotate = -20;
         this.pipes.forEach((pipe, index, arr) => {
-            pipe.left = (1 + (index + 1) >> 1) * (this.pipeWidth + this.distanceBetweenPipe);
+            pipe.left = this.width + ((1 + (index + 1) >> 1) - 1) * (this.pipeWidth + this.distanceBetweenPipe);
             pipe.height = index & 1 ? this.height - this.ground.height - arr[index - 1].height - this.distancePipeTopBottom : 50 + ~~(Math.random() * 200);
             pipe.top = index & 1 ? arr[index - 1].height + this.distancePipeTopBottom : 0;
         });
@@ -90,6 +97,16 @@ export default class Scenery {
         }
     }
 
+    checkScore() {
+        for (let i = 0; i + i < this.totalPipe; i++) {
+            const pipe = this.pipes[2 * i];
+            const denta = this.bird.left + this.bird.width - pipe.left - pipe.width;
+            if (denta <= this.pipeSpeed && denta > 0) {
+                this.score++;
+            }
+        }
+    }
+
     update() {
         if (this.bird.top + this.bird.height > this.ground.top) {
             this.bird.flyUp();
@@ -100,5 +117,6 @@ export default class Scenery {
         this.bird.update();
         this.sky.update();
         this.pipes.forEach(pipe => pipe.update());
+        this.checkScore();
     }
 }
