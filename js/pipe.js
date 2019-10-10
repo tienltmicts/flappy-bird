@@ -4,7 +4,7 @@ export default class Pipe {
     top = 0;
     left = 0;
     isTopPipe = false;
-    speed = 1;
+    speed = 2;
     constructor(isTopPipe) {
         this.isTopPipe = isTopPipe;
         this.pipe = document.createElement('div');

@@ -2,10 +2,14 @@ import Ground from "./ground.js";
 import Sky from "./sky.js";
 import Bird from "./bird.js";
 import Pipe from "./pipe.js";
+import Score from "./score.js";
 
 export default class Scenery {
     isGameOver = false;
     isHitPipe = false;
+    hitPipes = new Audio('assets/audio/hit.wav');
+    hitGround = new Audio('assets/audio/hit.wav');
+    downDied = new Audio('assets/audio/die.wav')
     constructor(width, height) {
         this.width = width;
         this.height = height;
@@ -55,7 +59,9 @@ export default class Scenery {
         this.bird.top = 100;
         this.bird.left = 100;
         this.scenery.appendChild(this.bird.getDOM());
-        this.score = 0;
+        this.score = new Score();
+        this.score.left = this.width / 2;
+        this.scenery.appendChild(this.score.getDOM());
     }
 
 
@@ -86,7 +92,10 @@ export default class Scenery {
     }
 
     checkDied() {
-        if (this.bird.top > (this.height - this.bird.height - this.ground.height)) {
+        if (this.bird.top > (this.height - this.bird.width - this.ground.height - 3)) {
+            if (!this.isHitPipe) {
+                this.hitGround.play();
+            }
             this.isGameOver = true;
             return true;
         }
@@ -96,8 +105,14 @@ export default class Scenery {
                 pipe.left <= this.bird.left + this.bird.width && (this.bird.left + this.bird.width) <= pipe.left + pipe.width) {
                 if (!(i & 1) && this.bird.top <= pipe.height ||
                     (i & 1) && this.bird.top + this.bird.height >= pipe.top && pipe.top > 150) {
-                    this.isHitPipe = true;
+                    this.downDied.currentTime = 0;
+                    this.downDied.play();
                     this.bird.up = 0;
+                    if (!this.isHitPipe) {
+                        this.isHitPipe = true;
+                        this.hitPipes.currentTime = 0;
+                        this.hitPipes.play();
+                    }
                     return true;
                 }
             }
@@ -110,16 +125,17 @@ export default class Scenery {
             const pipe = this.pipes[2 * i];
             const denta = this.bird.left + this.bird.width - pipe.left - pipe.width;
             if (denta <= this.pipeSpeed && denta > 0) {
-                this.score++;
+                this.score.value++;
             }
         }
     }
 
     update() {
-        this.checkDied();
         this.ground.update();
         this.sky.update();
+        this.score.update();
         if (!this.isGameOver) {
+            this.checkDied();
             this.bird.update();
             if (!this.isHitPipe) {
                 this.movePipe();
