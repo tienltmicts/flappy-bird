@@ -3,13 +3,23 @@ export default class Score {
     height = this.width * 36 / 24;
     top = 100;
     left = 400;
+    increasePointSound = new Audio('assets/audio/point.wav');
+
     constructor(value = 0) {
         this.score = document.createElement('div');
         this.value = value;
     }
+
     getDOM() {
         return this.score;
     }
+
+    increase(value = 1) {
+        this.value += value;
+        this.increasePointSound.currentTime = 0;
+        this.increasePointSound.play();
+    }
+
     update() {
         const nums = this.value.toString().split('');
         this.score.style.backgroundImage = nums.map(i => `url(assets/sprites/${i}.png)`).join(", ");
@@ -23,19 +33,3 @@ export default class Score {
         this.score.style.backgroundRepeat = 'no-repeat';
     }
 }
-// class Number {
-//     constructor(value) {
-//         this.score = document.createElement('div');
-//         this.value = value;
-//         this.score.style.backgroundImage = `url(assets/sprites/${this.value}.png)`;
-//         this.score.style.width = this.width + 'px';
-//         this.score.style.height = this.height + 'px';
-//         this.score.style.top = this.top + 'px';
-//         this.score.style.left = this.left + 'px';
-//         this.score.style.position = 'absolute';
-//         this.score.style.backgroundRepeat = 'no-repeat';
-//     }
-//     getDOM() {
-//         return this.score;
-//     }
-// }

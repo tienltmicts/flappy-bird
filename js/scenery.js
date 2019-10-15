@@ -10,6 +10,7 @@ export default class Scenery {
     hitPipes = new Audio('assets/audio/hit.wav');
     hitGround = new Audio('assets/audio/hit.wav');
     downDied = new Audio('assets/audio/die.wav')
+
     constructor(width, height) {
         this.width = width;
         this.height = height;
@@ -25,9 +26,14 @@ export default class Scenery {
         this.sky.width = this.width;
         this.sky.height = this.height - 80;
         this.scenery.appendChild(this.sky.getDOM());
-
-
+        this.start = false;
         window.onclick = () => {
+            this.start = true;
+            if (!this.isGameOver && !this.isHitPipe) this.bird.flyUp();
+        }
+
+        window.onkeydown = () => {
+            this.start = true;
             if (!this.isGameOver && !this.isHitPipe) this.bird.flyUp();
         }
 
@@ -92,7 +98,7 @@ export default class Scenery {
     }
 
     checkDied() {
-        if (this.bird.top > (this.height - this.bird.width - this.ground.height - 3)) {
+        if (this.bird.top > (this.ground.top - this.bird.height) ) {//this.height - this.bird.width - this.ground.height)) {
             if (!this.isHitPipe) {
                 this.hitGround.play();
             }
@@ -105,13 +111,13 @@ export default class Scenery {
                 pipe.left <= this.bird.left + this.bird.width && (this.bird.left + this.bird.width) <= pipe.left + pipe.width) {
                 if (!(i & 1) && this.bird.top <= pipe.height ||
                     (i & 1) && this.bird.top + this.bird.height >= pipe.top && pipe.top > 150) {
-                    this.downDied.currentTime = 0;
-                    this.downDied.play();
                     this.bird.up = 0;
                     if (!this.isHitPipe) {
                         this.isHitPipe = true;
                         this.hitPipes.currentTime = 0;
                         this.hitPipes.play();
+                        this.downDied.currentTime = 0;
+                        this.downDied.play();
                     }
                     return true;
                 }
@@ -125,7 +131,7 @@ export default class Scenery {
             const pipe = this.pipes[2 * i];
             const denta = this.bird.left + this.bird.width - pipe.left - pipe.width;
             if (denta <= this.pipeSpeed && denta > 0) {
-                this.score.value++;
+                this.score.increase();
             }
         }
     }
@@ -134,14 +140,24 @@ export default class Scenery {
         this.ground.update();
         this.sky.update();
         this.score.update();
-        if (!this.isGameOver) {
-            this.checkDied();
+        if(!this.start) {
+            this.bird.flapping();
             this.bird.update();
-            if (!this.isHitPipe) {
-                this.movePipe();
-                this.pipes.forEach(pipe => pipe.update());
-                this.checkScore();
-            }
         }
+        else {
+            
+            if (!this.isGameOver) {
+                this.checkDied();
+                this.bird.flyAnimation();
+                this.bird.update();
+                if (!this.isHitPipe) {
+                    this.movePipe();
+                    this.pipes.forEach(pipe => pipe.update());
+                    this.checkScore();
+                }
+            }
+            
+        }
+        
     }
 }
