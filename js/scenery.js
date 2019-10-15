@@ -3,8 +3,9 @@ import Sky from "./sky.js";
 import Bird from "./bird.js";
 import Pipe from "./pipe.js";
 import Score from "./score.js";
-import End from "./end.js";
+import GameOverScreen from "./game-over-screen.js";
 import Start from "./start.js";
+import RetryScreen from "./retry-screen.js";
 
 export default class Scenery {
   isGameOver = false;
@@ -28,8 +29,13 @@ export default class Scenery {
     this.sky.width = this.width;
     this.sky.height = this.height - 80;
     this.scenery.appendChild(this.sky.getDOM());
-    this.starts = new Start();
     this.start = false;
+    this.starts = new Start();
+    this.retryScreen = new RetryScreen();
+    this.retryScreen.hide();
+    this.retryScreen.onClick(() => this.restart() );
+    this.scenery.appendChild(this.retryScreen.getDOM());
+    
     window.onclick = () => {
       this.start = true;
       if (!this.isGameOver && !this.isHitPipe) this.bird.flyUp();
@@ -73,8 +79,9 @@ export default class Scenery {
     this.score = new Score();
     this.score.left = this.width / 2;
     this.scenery.appendChild(this.score.getDOM());
-    this.end = new End();
-    this.scenery.appendChild(this.end.getDOM());
+    this.gameOverScreen = new GameOverScreen();
+    this.gameOverScreen.hide();
+    this.scenery.appendChild(this.gameOverScreen.getDOM());
     this.scenery.appendChild(this.starts.getDOM());
   }
 
@@ -91,10 +98,12 @@ export default class Scenery {
   }
 
   restart() {
-    this.end.update();
+    this.gameOverScreen.hide();
+    this.retryScreen.hide();
+    this.gameOverScreen.update();
     this.isGameOver = false;
     this.isHitPipe = false;
-    this.score = 0;
+    this.score.value = 0;
     this.bird.top = 100;
     this.bird.up = 0;
     this.bird.left = 100;
@@ -113,7 +122,8 @@ export default class Scenery {
         this.hitGround.play();
       }
       this.isGameOver = true;
-      this.end.update();
+      this.gameOverScreen.show();
+      this.retryScreen.show();
       return true;
     }
     for (let i = 0; i < this.totalPipe; i++) {
@@ -129,14 +139,17 @@ export default class Scenery {
             this.hitPipes.play();
             this.downDied.currentTime = 0;
             this.downDied.play();
-            this.end.update();
+            this.gameOverScreen.show();
+            this.retryScreen.show();
           }
           return true;
-
+          
         }
       }
+      
     }
     return false;
+    
   }
 
   checkScore() {

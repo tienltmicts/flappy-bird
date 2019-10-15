@@ -1,7 +1,7 @@
 export default class Start {
   width = 200;
   height = 300;
-  top = 200;
+  top = 100;
   left = 300;
   constructor() {
     this.start = document.createElement('div');
