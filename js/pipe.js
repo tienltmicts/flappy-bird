@@ -5,6 +5,11 @@ export default class Pipe {
   left = 0;
   isTopPipe = false;
   speed = 1;
+  w = 0;
+  d = 0.01;
+  amplitude = 50;
+  acceleration = 0.003;
+  velocity = 0;
   constructor(isTopPipe) {
     this.isTopPipe = isTopPipe;
     this.pipe = document.createElement('div');
@@ -17,6 +22,21 @@ export default class Pipe {
   moveLeft() {
     this.left -= this.speed;
   }
+
+  // jump() {
+  //   this.amplitude = 
+  // }
+
+  // verb() {
+  //   // this.w += this.d;
+  //   // if (this.w > Math.PI) {
+  //   //   this.d = - this.d;
+  //   // }
+  //   // this.height = this.amplitude * Math.cos(this.w);
+  //   this.velocity -= this.acceleration;
+  //   if(this.height > 400 && this.height < 800) this.height -= this.velocity;
+  //   this.height += this.velocity;
+  // }
 
   update() {
     this.pipe.style.backgroundImage = 'url(assets/sprites/pipe-green.png)';

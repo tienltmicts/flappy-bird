@@ -8,8 +8,8 @@ import Start from "./start.js";
 import RetryScreen from "./retry-screen.js";
 
 export default class Scenery {
-  isGameOver = false;
-  isHitPipe = false;
+  isGameOver = true;
+  isHitPipe = true;
   hitPipes = new Audio('assets/audio/hit.wav');
   hitGround = new Audio('assets/audio/hit.wav');
   downDied = new Audio('assets/audio/die.wav')
@@ -33,19 +33,29 @@ export default class Scenery {
     this.starts = new Start();
     this.retryScreen = new RetryScreen();
     this.retryScreen.hide();
-    this.retryScreen.onClick(() => this.restart() );
+    this.retryScreen.onClick(() => this.restart());
     this.scenery.appendChild(this.retryScreen.getDOM());
-    
+
     window.onclick = () => {
-      this.start = true;
-      if (!this.isGameOver && !this.isHitPipe) this.bird.flyUp();
-      this.starts.hide();
+      if (!this.isGameOver && !this.isHitPipe) {
+        this.bird.flyUp();
+      } else {
+        if (!this.start) {
+          this.restart();
+          this.bird.flyUp();
+        }
+      }
     }
 
-    window.onkeydown = () => {
-      this.start = true;
-      if (!this.isGameOver && !this.isHitPipe) this.bird.flyUp();
-      this.starts.hide();
+    window.onkeydown = (e) => {
+      if (!this.isGameOver && !this.isHitPipe) {
+        this.bird.flyUp();
+      } else {
+        if (e.key == 'Enter') {
+          this.restart();
+          this.bird.flyUp();
+        }
+      }
     }
 
     this.distancePipeTopBottom = 200;
@@ -85,19 +95,35 @@ export default class Scenery {
     this.scenery.appendChild(this.starts.getDOM());
   }
 
-
   movePipe() {
     this.pipes.forEach((pipe, index, arr) => {
       pipe.moveLeft();
+      
+      if (index & 1) {
+        pipe.height = this.height - this.ground.height - arr[index - 1].height - this.distancePipeTopBottom;
+        pipe.top = arr[index - 1].height + this.distancePipeTopBottom;
+      } else {
+        //pipe.verb();
+      }
+
       if (pipe.left < -this.pipeWidth) {
-        pipe.height = index & 1 ? this.height - this.ground.height - arr[index - 1].height - this.distancePipeTopBottom : 50 + ~~(Math.random() * 200);
-        pipe.top = index & 1 ? arr[index - 1].height + this.distancePipeTopBottom : 0;
-        pipe.left += (this.pipeWidth + this.distanceBetweenPipe) * (this.totalPipe >> 1);
+        if (index & 1) { // is Pipe bottom
+          pipe.height = this.height - this.ground.height - arr[index - 1].height - this.distancePipeTopBottom;
+          pipe.top = arr[index - 1].height + this.distancePipeTopBottom;
+          pipe.left += (this.pipeWidth + this.distanceBetweenPipe) * (this.totalPipe >> 1);
+        } else {
+          pipe.height = 50 + ~~(Math.random() * 200);
+          pipe.top = 0;
+          pipe.left += (this.pipeWidth + this.distanceBetweenPipe) * (this.totalPipe >> 1);
+        }
+
       }
     });
   }
 
   restart() {
+    this.starts.hide();
+    this.start = true;
     this.gameOverScreen.hide();
     this.retryScreen.hide();
     this.gameOverScreen.update();
@@ -143,13 +169,13 @@ export default class Scenery {
             this.retryScreen.show();
           }
           return true;
-          
+
         }
       }
-      
+
     }
     return false;
-    
+
   }
 
   checkScore() {
@@ -182,8 +208,6 @@ export default class Scenery {
           this.checkScore();
         }
       }
-
     }
-
   }
 }
